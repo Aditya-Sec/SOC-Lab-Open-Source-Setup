@@ -1,0 +1,20 @@
+                 +--------------------+
+                 |   OPNsense / VM    |
+                 | (Firewall / NAT)   |
+                 +---------+----------+
+                           |
+                           |
+                    (wan / lan routed)
+                           |
++-----------------+        |        +-------------------+
+| Kali Purple     |--------+--------| Ubuntu Server     |
+| (Suricata + FB) | eve.json / FB   | (Docker: ES,KB)   |
++-----------------+                 +--------+----------+
+                                              |
+             +--------------------------------+---------------------------------+
+             |                                |                                 |
+         Elasticsearch <-----------------> Kibana                        Grafana (ES)
+             |                                |
+        Wazuh Manager                        TheHive <----> Cortex
+             |                                |
+         Wazuh Agents                       MISP (Threat Intel)
