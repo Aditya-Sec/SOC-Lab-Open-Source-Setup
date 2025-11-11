@@ -1,0 +1,37 @@
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /var/log/suricata/eve.json
+  json.keys_under_root: true
+  json.add_error_key: true
+  processors:
+    - add_fields:
+        target: ''
+        fields:
+          service:
+            name: suricata
+    - rename:
+        fields:
+          - from: src_ip
+            to: source.ip
+          - from: dest_ip
+            to: destination.ip
+          - from: src_port
+            to: source.port
+          - from: dest_port
+            to: destination.port
+        ignore_missing: true
+        fail_on_error: false
+
+output.elasticsearch:
+  hosts: ["http://192.168.206.133:9200"]
+  username: "elastic"
+  password: "changeme"
+
+setup.template.name: "filebeat"
+setup.template.pattern: "filebeat-*"
+setup.template.enabled: true
+
+setup.kibana:
+  host: "http://192.168.206.133:5601"
