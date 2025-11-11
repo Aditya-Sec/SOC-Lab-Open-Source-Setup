@@ -1,0 +1,5 @@
+$ sudo /var/ossec/bin/list_agents
+ID: 001 - Name: workstation-ubuntu - IP: 192.168.56.101 - Active (registered) - Last keepalive: 2025-11-11 12:20:03
+ID: 002 - Name: kali-purple - IP: 192.168.56.102 - Active (registered) - Last keepalive: 2025-11-11 12:25:17
+Total agents: 2
+checked_at: 2025-11-11T12:33:45Z
