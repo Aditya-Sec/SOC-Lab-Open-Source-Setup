@@ -1,0 +1,14 @@
+# Overwrite .env with generated secrets (paste and run from repo root)
+cat > .env <<'EOF'
+ELASTIC_PASSWORD=S8v#x7qP9mVt4Lz2RkA0wYb6
+WAZUH_PASSWORD=pN4!sG2zQ8uB7wR1XyF6cT0
+GRAFANA_PASSWORD=Gf9^hZ3uLp6#rV0sQw8tYb2
+ES_HOST=192.168.206.133
+KIBANA_HOST=192.168.206.133
+VT_API_KEY=VT-DEMO-6f9a2b3c4d5e6f7a8b9c0d1e
+MISP_API_KEY=MISP-DEMO-9a8b7c6d5e4f3a2b1c0d9e8f
+CORTEX_API_KEY=CORTEX-DEMO-1a2b3c4d5e6f7a8b9c0d1e2f
+EOF
+
+# Restrict permissions so only you can read/write .env
+chmod 600 .env
