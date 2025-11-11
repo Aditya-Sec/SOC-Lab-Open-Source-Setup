@@ -1,0 +1,4 @@
+OPNsense firewall rules (LAN)
+1) Block 192.168.56.102 -> any (manual containment rule) - added 2025-11-11 12:40:01 by admin
+2) Allow LAN net -> any (default) - enabled
+(Screenshot placeholder: opnsense-lan-rules-2025-11-11.png)
