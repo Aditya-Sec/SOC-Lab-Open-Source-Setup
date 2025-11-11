@@ -1,0 +1,44 @@
+### Follow these numbered steps exactly to get the lab up and capture the snapshots.
+
+
+Stage 1 — Central server (Ubuntu 22.04)
+
+Provision Ubuntu VM with 6GB RAM (min) and 2 vCPUs.
+Install Docker & docker-compose (commands above).
+Copy docker-compose.yml into /home/ubuntu/soc-project/.
+docker-compose up -d
+Wait a few minutes, then run:
+curl -u elastic:changeme 'http://localhost:9200/_cluster/health?pretty' → save output into snapshots/snapshot-01-elasticsearch-health.txt.
+curl -u elastic:changeme 'http://localhost:9200/_cat/indices?v&s=index' → save to snapshots/snapshot-02-kibana-indices.txt.
+
+
+Stage 2 — Kali Purple (Suricata + Filebeat)
+
+Install Kali VM and update packages.
+Copy the repo to Kali (SCP or shared folder).
+sudo bash scripts/install-kali-suricata.sh
+Edit /etc/filebeat/filebeat.yml (replace <ES_HOST> with central server IP).
+sudo systemctl restart filebeat suricata
+Verify Suricata is producing logs:
+sudo tail -n 50 /var/log/suricata/eve.json → grab an event and save to snapshots/snapshot-04-suricata-eve-sample.json
+
+Stage 3 — Wazuh agents
+
+Install Wazuh agent on endpoints (use infra/wazuh/agent.conf).
+Register agent on manager.
+On manager run /var/ossec/bin/list_agents and save to snapshots/snapshot-03-wazuh-agents.txt.
+
+Stage 4 — TheHive / Cortex / MISP / Grafana
+
+Access TheHive at http://<server-ip>:9000 and create a test case.
+Configure Cortex analyzers (API keys required).
+Access MISP http://<server-ip>:8085 and import a sample IOC.
+In Grafana, add Elasticsearch datasource and import dashboards.
+
+Stage 5 — Create TheHive case from Suricata alert (demo)
+
+Use Kibana to view an alert from filebeat-*, then in TheHive create case and attach:
+the Suricata JSON (from eve.json),
+Wazuh agent logs (if endpoint contacted),
+
+enrichment results (Cortex outputs).
