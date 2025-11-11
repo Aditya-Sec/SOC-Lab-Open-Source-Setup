@@ -1,0 +1,82 @@
+
+**`docker-compose.yml`**
+```yaml
+version: '3.8'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.0
+    container_name: es
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD=changeme
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.10.0
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=changeme
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+
+  wazuh:
+    image: wazuh/wazuh:4.5.0
+    container_name: wazuh
+    environment:
+      - ELASTICSEARCH_HOST=elasticsearch
+      - ELASTICSEARCH_PORT=9200
+      - WAZUH_MANAGER_PASSWORD=wazuhpass
+    depends_on:
+      - elasticsearch
+    ports:
+      - "1514:1514/udp"
+      - "1515:1515"
+
+  thehive:
+    image: thehiveproject/thehive:4.0.0
+    container_name: thehive
+    environment:
+      - CORTEX_URL=http://cortex:9001
+    ports:
+      - "9000:9000"
+    depends_on:
+      - cortex
+
+  cortex:
+    image: thehiveproject/cortex:3.0.0
+    container_name: cortex
+    ports:
+      - "9001:9001"
+
+  grafana:
+    image: grafana/grafana:10.0.0
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=changeme
+
+  misp:
+    image: harvarditsecurity/misp
+    container_name: misp
+    ports:
+      - "8085:80"
+
+volumes:
+  es_data:
+
+
+# Reminder: Images/versions used are for a lab. If you run into memory issues with Elasticsearch, increase host RAM or lower ES_JAVA_OPTS.
